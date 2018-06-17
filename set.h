@@ -33,14 +33,12 @@ private:
             if (v.parent != nullptr) {
                 if (v.parent->left == b) {
                     v.parent->left = a;
-                }
-                else v.parent->right = a;
+                } else v.parent->right = a;
             }
             if (u.parent != nullptr) {
                 if (u.parent->left == a) {
                     u.parent->left = b;
-                }
-                else u.parent->right = b;
+                } else u.parent->right = b;
             }
             if (u.right != nullptr) {
                 u.right->parent = b;
@@ -131,8 +129,12 @@ private:
             return a.p != b.p;
         }
 
-        U &operator*() {
+        U const &operator*() const {
             return static_cast<const node_t *>(p)->value;
+        }
+
+        U const *operator->() const {
+            return &(static_cast<const node_t * > (p)->value);
         }
 
     private:
@@ -143,9 +145,6 @@ private:
 
     std::pair<iterator, bool> insert_impl(T const &x, node *curr) {
         T &value = static_cast<node_t *> (curr)->value;
-        if (!(value < x) && !(x < value)) {
-            return {curr, false};
-        }
         if (value < x) {
             if (curr->right == nullptr) {
                 curr->right = new node_t(x);
@@ -161,7 +160,8 @@ private:
                 return {curr->right, true};
             }
             return insert_impl(x, curr->left);
-        }
+        } else
+            return {curr, false};
     };
 
     const_iterator find_impl(T const &x, node *curr) const {
