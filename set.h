@@ -28,24 +28,32 @@ private:
         explicit node_t(T const &x) : value(x) {};
 
         friend void swap(node_t *a, node_t *b) {
-            if (b->parent != nullptr) {
-                if (b->parent->left == b)
-                    b->parent->left = a;
-                else b->parent->right = a;
+            node_t u(*a);
+            node_t v(*b);
+            if (v.parent != nullptr) {
+                if (v.parent->left == b) {
+                    v.parent->left = a;
+                }
+                else v.parent->right = a;
             }
-            if (a->parent != nullptr) {
-                if (a->parent->left == a)
-                    a->parent->left = b;
-                else a->parent->right = b;
+            if (u.parent != nullptr) {
+                if (u.parent->left == a) {
+                    u.parent->left = b;
+                }
+                else u.parent->right = b;
             }
-            if (a->right != nullptr)
-                a->right->parent = b;
-            if (b->right != nullptr)
-                b->right->parent = a;
-            if (a->left != nullptr)
-                a->left->parent = b;
-            if (b->left != nullptr)
-                b->left->parent = a;
+            if (u.right != nullptr) {
+                u.right->parent = b;
+            }
+            if (v.right != nullptr) {
+                v.right->parent = a;
+            }
+            if (u.left != nullptr) {
+                u.left->parent = b;
+            }
+            if (v.left != nullptr) {
+                v.left->parent = a;
+            }
             std::swap(b->parent, a->parent);
             std::swap(b->right, a->right);
             std::swap(b->left, a->left);
@@ -244,8 +252,13 @@ public:
     set() : _size(0), root() {}
 
     set(set const &other) : _size(0) {
-        for (iterator it = other.begin(); it != other.end(); it++) {
-            insert(*it);
+        try {
+            for (iterator it = other.begin(); it != other.end(); it++) {
+                insert(*it);
+            }
+        } catch (...) {
+            clear();
+            throw;
         }
     };
 
